@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "job_applications")
@@ -35,4 +36,6 @@ public class JobApplication {
     @ManyToOne
     @JoinColumn(name ="user_id", nullable = false)
     private User user;
+    @OneToMany(mappedBy = "jobApplication")
+    private List<Note> notes;
 }
