@@ -1,5 +1,7 @@
 package com.example.jobtracker.service;
 
+import com.example.jobtracker.dto.LoginRequest;
+import com.example.jobtracker.dto.RegisterRequest;
 import com.example.jobtracker.entity.User;
 import com.example.jobtracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,5 +19,18 @@ public class UserService {
     }
     public User save(User user) {
         return userRepository.save(user);
+    }
+    public User register(RegisterRequest request) {
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .build();
+
+        return userRepository.save(user);
+    }
+    public User login(LoginRequest request){
+        return userRepository.findByEmail(request.getEmail())
+                .filter(u -> u.getPassword().equals(request.getPassword()))
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
     }
 }
