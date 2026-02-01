@@ -1,5 +1,6 @@
 package com.example.jobtracker.controller;
 import com.example.jobtracker.dto.JobApplicationRequest;
+import com.example.jobtracker.dto.JobApplicationUpdateRequest;
 import jakarta.validation.Valid;
 import com.example.jobtracker.dto.JobApplicationResponse;
 import com.example.jobtracker.entity.JobApplication;
@@ -67,5 +68,20 @@ public class JobApplicationController {
                         .build()
                 )
                 .toList();
+    }
+    @PutMapping("/{id}")
+    public JobApplicationResponse updateJobApplication(
+            @PathVariable Long id,
+            @Valid @RequestBody JobApplicationUpdateRequest request
+    ) {
+        JobApplication updated = jobApplicationService.update(id, request);
+
+        return JobApplicationResponse.builder()
+                .id(updated.getId())
+                .companyName(updated.getCompanyName())
+                .position(updated.getPosition())
+                .status(updated.getStatus())
+                .appliedDate(updated.getAppliedDate())
+                .build();
     }
 }
