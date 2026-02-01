@@ -1,5 +1,7 @@
 package com.example.jobtracker.entity;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,13 +23,16 @@ public class JobApplication {
     private Long id;
 
     @Column(nullable = false)
+    @NotBlank
     private String companyName;
 
     @Column(nullable = false)
+    @NotBlank
     private String position;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull
     private ApplicationStatus status;
 
     @Column(nullable = false)

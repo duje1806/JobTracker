@@ -1,5 +1,6 @@
 package com.example.jobtracker.controller;
-
+import com.example.jobtracker.dto.JobApplicationRequest;
+import jakarta.validation.Valid;
 import com.example.jobtracker.dto.JobApplicationResponse;
 import com.example.jobtracker.entity.JobApplication;
 import com.example.jobtracker.entity.User;
@@ -20,20 +21,38 @@ public class JobApplicationController {
     private final UserService userService;
 
     @PostMapping
-    public JobApplication createJobApplication(@RequestBody JobApplication application) {
-      User user = userService.findByEmail("test@test.com")
-              .orElseGet(() ->
-                      userService.save(
-                              User.builder()
-                                      .email("test@test.com")
-                                      .password("password")
-                                      .build()
-                      )
-              );
-        application.setAppliedDate(LocalDate.now());
+    public JobApplicationResponse createJobApplication(
+            @Valid @RequestBody JobApplicationRequest request
+    ) {
+        User user = userService.findByEmail("test@test.com")
+                .orElseGet(() ->
+                        userService.save(
+                                User.builder()
+                                        .email("test@test.com")
+                                        .password("password")
+                                        .build()
+                        )
+                );
 
-      return jobApplicationService.create(application, user);
+        JobApplication application = JobApplication.builder()
+                .companyName(request.getCompanyName())
+                .position(request.getPosition())
+                .status(request.getStatus())
+                .appliedDate(LocalDate.now())
+                .user(user)
+                .build();
+
+        JobApplication saved = jobApplicationService.create(application, user);
+
+        return JobApplicationResponse.builder()
+                .id(saved.getId())
+                .companyName(saved.getCompanyName())
+                .position(saved.getPosition())
+                .status(saved.getStatus())
+                .appliedDate(saved.getAppliedDate())
+                .build();
     }
+
 
     @GetMapping
     public List<JobApplicationResponse> getMyApplications(){
