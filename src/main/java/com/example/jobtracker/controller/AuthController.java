@@ -1,8 +1,9 @@
 package com.example.jobtracker.controller;
-
 import com.example.jobtracker.dto.LoginRequest;
+import com.example.jobtracker.dto.LoginResponse;
 import com.example.jobtracker.dto.RegisterRequest;
 import com.example.jobtracker.entity.User;
+import com.example.jobtracker.service.JwtService;
 import com.example.jobtracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
+    private final JwtService jwtService;
 
     @PostMapping("/register")
     public User register(@Valid @RequestBody RegisterRequest request) {
@@ -23,8 +25,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public User login(@Valid @RequestBody LoginRequest request) {
-        return userService.login(request);
+    public LoginResponse login(@RequestBody LoginRequest request) {
+        User user = userService.login(request);
+        String token = jwtService.generateToken(user.getEmail()); // 👈 OVDJE
+        return new LoginResponse(token);
     }
+
 
 }

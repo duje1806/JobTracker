@@ -13,15 +13,10 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-    public User save(User user) {
-        return userRepository.save(user);
-    }
     public User register(RegisterRequest request) {
         User user = User.builder()
                 .email(request.getEmail())
@@ -30,10 +25,24 @@ public class UserService {
 
         return userRepository.save(user);
     }
-    public User login(LoginRequest request){
+
+    public User login(LoginRequest request) {
         return userRepository.findByEmail(request.getEmail())
-                .filter(u -> passwordEncoder.matches(request.getPassword(), u.getPassword()))
+                .filter(u -> passwordEncoder.matches(
+                        request.getPassword(),
+                        u.getPassword()
+                ))
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
     }
 
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 }
+
+
+

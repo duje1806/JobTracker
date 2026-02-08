@@ -1,12 +1,13 @@
 package com.example.jobtracker.controller;
+
 import com.example.jobtracker.dto.JobApplicationRequest;
-import com.example.jobtracker.dto.JobApplicationUpdateRequest;
-import jakarta.validation.Valid;
 import com.example.jobtracker.dto.JobApplicationResponse;
+import com.example.jobtracker.dto.JobApplicationUpdateRequest;
 import com.example.jobtracker.entity.JobApplication;
 import com.example.jobtracker.entity.User;
 import com.example.jobtracker.service.JobApplicationService;
 import com.example.jobtracker.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
