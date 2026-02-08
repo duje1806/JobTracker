@@ -4,11 +4,10 @@ import com.example.jobtracker.dto.JobApplicationRequest;
 import com.example.jobtracker.dto.JobApplicationResponse;
 import com.example.jobtracker.dto.JobApplicationUpdateRequest;
 import com.example.jobtracker.entity.JobApplication;
-import com.example.jobtracker.entity.User;
 import com.example.jobtracker.service.JobApplicationService;
-import com.example.jobtracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,31 +19,18 @@ import java.util.List;
 public class JobApplicationController {
 
     private final JobApplicationService jobApplicationService;
-    private final UserService userService;
 
     @PostMapping
     public JobApplicationResponse createJobApplication(
-            @Valid @RequestBody JobApplicationRequest request
+            @Valid @RequestBody JobApplicationRequest request,
+            Authentication authentication
     ) {
-        User user = userService.findByEmail("test@test.com")
-                .orElseGet(() ->
-                        userService.save(
-                                User.builder()
-                                        .email("test@test.com")
-                                        .password("password")
-                                        .build()
-                        )
-                );
+        String email = authentication.getName(); // 👈 iz JWT-a
 
-        JobApplication application = JobApplication.builder()
-                .companyName(request.getCompanyName())
-                .position(request.getPosition())
-                .status(request.getStatus())
-                .appliedDate(LocalDate.now())
-                .user(user)
-                .build();
-
-        JobApplication saved = jobApplicationService.create(application, user);
+        JobApplication saved = jobApplicationService.create(
+                request,
+                email
+        );
 
         return JobApplicationResponse.builder()
                 .id(saved.getId())
@@ -55,10 +41,13 @@ public class JobApplicationController {
                 .build();
     }
 
-
     @GetMapping
-    public List<JobApplicationResponse> getMyApplications(){
-        return jobApplicationService.findByUser(1L)
+    public List<JobApplicationResponse> getMyApplications(
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+
+        return jobApplicationService.findByUserEmail(email)
                 .stream()
                 .map(app -> JobApplicationResponse.builder()
                         .id(app.getId())
@@ -70,6 +59,7 @@ public class JobApplicationController {
                 )
                 .toList();
     }
+
     @PutMapping("/{id}")
     public JobApplicationResponse updateJobApplication(
             @PathVariable Long id,
