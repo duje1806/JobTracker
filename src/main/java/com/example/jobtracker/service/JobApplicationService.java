@@ -4,6 +4,8 @@ import com.example.jobtracker.dto.JobApplicationRequest;
 import com.example.jobtracker.dto.JobApplicationUpdateRequest;
 import com.example.jobtracker.entity.JobApplication;
 import com.example.jobtracker.entity.User;
+import com.example.jobtracker.exception.ForbiddenException;
+import com.example.jobtracker.exception.ResourceNotFoundException;
 import com.example.jobtracker.repository.JobApplicationRepository;
 import com.example.jobtracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ public class JobApplicationService {
     public JobApplication create(JobApplicationRequest request, String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Job application not found"));
 
         JobApplication application = JobApplication.builder()
                 .companyName(request.getCompanyName())
@@ -42,7 +44,7 @@ public class JobApplicationService {
     public JobApplication update(Long id, JobApplicationUpdateRequest request) {
 
         JobApplication application = jobApplicationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                .orElseThrow(() -> new ForbiddenException("Application not found"));
 
         application.setCompanyName(request.getCompanyName());
         application.setPosition(request.getPosition());

@@ -3,6 +3,7 @@ package com.example.jobtracker.service;
 import com.example.jobtracker.dto.LoginRequest;
 import com.example.jobtracker.dto.RegisterRequest;
 import com.example.jobtracker.entity.User;
+import com.example.jobtracker.exception.ForbiddenException;
 import com.example.jobtracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +33,7 @@ public class UserService {
                         request.getPassword(),
                         u.getPassword()
                 ))
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new ForbiddenException("Invalid credentials"));
     }
 
 }
