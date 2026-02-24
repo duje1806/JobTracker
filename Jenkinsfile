@@ -18,22 +18,18 @@ pipeline {
             steps {
                 bat 'mvn test'
             }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
         }
 
         stage('Package') {
             steps {
                 bat 'mvn clean package -DskipTests'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
-        stage('Test') {
-    steps {
-        bat 'mvn test'
-    }
-    post {
-        always {
-            junit 'target/surefire-reports/*.xml'
-        }
-    }
-}
     }
 }
