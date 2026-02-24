@@ -8,12 +8,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/duje1806/JobTracker'
-            }
-        }
-
         stage('Build') {
             steps {
                 bat 'mvn clean compile'
